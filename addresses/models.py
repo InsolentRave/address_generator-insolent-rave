@@ -8,6 +8,7 @@ from .address_generator import generate_address
 
 logger = logging.getLogger('django')
 
+
 class Address(models.Model):
     currency = models.CharField(max_length=3, help_text='three-letter acronym, such as “BTC” or “ETH”')
     address = models.CharField(max_length=100)
