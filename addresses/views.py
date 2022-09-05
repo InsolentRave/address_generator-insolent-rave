@@ -18,6 +18,11 @@ class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
 
     def create(self, request):
+        """
+        Override the create method because all attributes of the Address object can not be given.
+
+        The address attribute needs to be calculated.
+        """
         data = CreateAddressRequestSerializer(request.data).data
 
         try:
@@ -28,6 +33,5 @@ class AddressViewSet(viewsets.ModelViewSet):
             raise ParseError(f"Non supported currency: {exc}")
         except AddressPathError as exc:
             raise ParseError(f"Invalid key path: {exc}")
-
 
         return JsonResponse(AddressSerializer(address).data, status=HTTPStatus.CREATED)
