@@ -1,8 +1,9 @@
-# wallet
+Address generator
+=================
 
-Generating and displaying cryptocurrency addresses
+Generator of cryptocurrency addresses
 
-# Overview
+## Description
 
 This is a Django application for generating and displaying cryptocurrency addresses via REST API.
 
@@ -16,48 +17,69 @@ Currently supported crypto currencies:
 - TRX tron
 
 
-# Bootstrap
+## Setup
 
-Install Python 3.6 or newer.
+Follow this instructions to run locally.
 
-Create a python virtual environment:
+1. Install Python 3.6 or newer.
+
+2. Create a python virtual environment:
+
 ```
 python -m venv .venv
 ```
 
-Activate the virtual environment:
+3. Activate the virtual environment:
+
 ```
-. .venv/bin/activate
+source .venv/bin/activate
+```
+4. Update pip
+
+```
+pip install --upgrade pip
 ```
 
-Install [Python library dependencies](requirements.txt):
+5. Install [Python library dependencies](requirements.txt):
+
 ```
 pip install -r requirements.txt
 ```
 
-Before running the service, set the environment variables:
+6. Create the migrations
+
+```
+python manage.py makemigrations
+
+python manage.py migrate
+```
+
+7. Before running the service, set the environment variable:
 ```
 export ZEPLY_XPRIVATE_KEY='xprv9s21ZrQH143K24t96gCaezzt1QQmnqiEGm8m6TP8yb8e3TmGfkCgcLEVsskufMW9R4KH27pD1kyyEfJkYz1eiPwjhFzB4gtabH3PzMSmXSM'
 ```
-This is a master / root private key for generating a private key for certain address. In this case ZEPLY_XPRIVATE_KEY was taken from HD wallet examples but it can be generated with a library function or algorithm.
+In this case ZEPLY_XPRIVATE_KEY was taken from HD wallet examples but it can be generated with a library function or algorithm. This is a master / root private key for generating a private key for certain address.
 
 
-In case of `ValueError: unsupported hash type ripemd160`,
-apply the [following](https://stackoverflow.com/questions/69922525/python-3-9-8-hashlib-and-ripemd160).
-
-
-# Usage
+## Usage
 
 Start the application:
 ```
 python manage.py runserver
 ```
 
-The application can be run in a docker container:
+### Docker
+The application can be run within a docker container:
 ```
-docker run -it --rm --name address_generator -v "$PWD":/home/app -p 8000:8000 -w /home/app python:3.8 bash
+docker run -it --rm --name address_generator -v "$PWD":/home/app -p hostport:8000 -w /home/app python:3.8 bash
 ```
 
+Then inside the container run the server using this command:
+```
+python manage.py runserver 0.0.0.0:8000
+```
+
+## API
 The application accepts the following HTTP requests:
 
 - Create a BTC address:
@@ -70,6 +92,7 @@ Content-Type: application/json
     "currency": "BTC",
     "path": "m/44/0"
 }
+
 ```
 Response:
 ```http
@@ -105,7 +128,7 @@ Content-Type: application/json
 ]
 ```
 
-- Retrieve an address with a given ID `1`:
+- Retrieve an address with a given ID, i.e. `1`:
 ```http
 GET /addresses/1/ HTTP/1.1
 Host: localhost:8000
@@ -123,25 +146,30 @@ Content-Type: application/json
 ```
 
 
-# Test
+## Tests
 
 To run all tests, run from the root directory of the repository:
 ```
 python manage.py test
 ```
 
+To run only the unit test:
+```
+python mange.py test -v3 addresses.tests
+```
+
+
 A [unit test](addresses/tests.py) tests the address generator module with the `generate_address` API.
 In the unit test, all the dependencies (usually the libraries imported in the module under test) are patched / mocked.
 Only the functionalities of the module under test have to be tested, but not the dependencies,
 e.g. that `hdwallet` can generate an address must not be tested.
 
-A [REST API end-to-end test](tests.py) tests that each endpoint can be requested and the response is proper.
+A [REST API end-to-end test](tests.py) tests that each endpoint can be requested and the response is the proper.
 
 
-# Security
+## Security
 
-The paths and `ZEPLY_XPRIVATE_KEY` master / root private key are the sensitive data.
-Although the private key is always needed to generate an address, the paths are never returned in any response.
+The paths and `ZEPLY_XPRIVATE_KEY` master / root private key are sensitive data. Although the private key is always needed to generate an address, the paths are never returned in any response.
 
 To increase security,
 [django can be used with SSL](https://timonweb.com/django/https-django-development-server-ssl-certificate/).
@@ -152,5 +180,29 @@ For using SSL,
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes -subj '/CN=localhost'
 ```
 
-The `ZEPLY_XPRIVATE_KEY` environment variable has to be provided by a secret manager like
+The `ZEPLY_XPRIVATE_KEY` environment variable could be provided by a secret manager service like
 [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/).
+
+
+## Useful links
+
+[But how does bitcoin actually work?](https://www.youtube.com/watch?v=bBC-nXj3Ng4)
+
+[Python - Hierarchical Deterministic Wallet](https://hdwallet.readthedocs.io/en/v2.1.1/index.html)
+
+[Bitcoin and Ethereum Address Validators](https://www.rfctools.com/bitcoin-address-validator/)
+
+[Litecoin Address Validator](https://www.walletvalidator.com/litecoin-wallet-validator/)
+
+[Tron Address Validator](https://developers.tron.network/reference/validateaddress)
+
+[Crypto Address Formats](https://www.abra.com/blog/crypto-address-formats/)
+
+[Bitpanda - What are public keys, private keys and wallet addresses?](https://www.bitpanda.com/academy/en/lessons/what-are-public-keys-private-keys-and-wallet-addresses/)
+
+[Django REST framework - API Guide](https://www.django-rest-framework.org/)
+
+
+## Author
+
+**Angela Checa** - [Trjegul84](https://github.com/Trjegul84)
