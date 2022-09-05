@@ -80,6 +80,8 @@ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## API
+This API supports JSON file format in the payload for responses and for address creation request.
+
 The application accepts the following HTTP requests:
 
 - Create a BTC address:
