@@ -1,5 +1,12 @@
 # coding: utf-8
 
+"""
+Copyright 2022
+
+@author Angela Checa
+@email angelachek@gmail.com
+"""
+
 from django.apps import AppConfig
 
 
